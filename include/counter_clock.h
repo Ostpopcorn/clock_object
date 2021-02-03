@@ -16,6 +16,7 @@ public:
 protected:
     void correct_time() override;
 
+
 };
 
 #endif //HEJ_COUNTER_CLOCK_H

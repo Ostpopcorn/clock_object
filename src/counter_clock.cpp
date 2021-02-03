@@ -2,6 +2,7 @@
 // Created by adrian on 2021-02-01.
 //
 
+#include <cstring>
 #include "../include/counter_clock.h"
 
 CounterClock::CounterClock() {}
@@ -11,7 +12,11 @@ CounterClock::CounterClock(int h, int m, int s) : ClockBase(h, m, s) {
 }
 
 std::string CounterClock::to_string(char fill) const {
-    return std::string("HEJ");
+    char* buff = new char[12];
+    ClockBase::to_string_base(buff,fill,false);
+    std::string a(buff,9);
+    delete[] buff;
+    return  a;
 }
 
 void CounterClock::correct_time() {
@@ -34,9 +39,4 @@ void CounterClock::correct_time() {
         minute += 60;
     }
 
-    hour %= 24;
-    if (hour < 0)
-    {
-        hour += 24;
-    }
 }

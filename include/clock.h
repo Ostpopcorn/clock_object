@@ -14,6 +14,7 @@ public:
 
     Clock(const ClockBase& base);
 
+    std::string to_string(bool format_12h) const;
     std::string to_string(char fill = '0', bool format_12h = false) const;
 
 

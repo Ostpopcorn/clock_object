@@ -7,33 +7,34 @@ using namespace std;
 TEST_CASE("Initializing", "[clock]")
 {
     Clock clock{00, 41, 50};
-    CHECK(clock.to_string('0', true) == "00:41:50");
-    CHECK(clock.to_string(' ', true) == "   41:50");
-    CHECK(clock.to_string(false) == "12:41:50 am");
+    CHECK(clock.to_string('0') == "00:41:50");
+    CHECK(clock.to_string(' ') == "   41:50");
+    CHECK(clock.to_string(true) == "12:41:50 am");
     clock = Clock{19, 41, 50};
-    CHECK(clock.to_string(false) == "07:41:50 pm");
+    CHECK(clock.to_string(true) == "07:41:50 pm");
     clock = Clock{19, 41, 50};
-    CHECK(clock.to_string(' ', false) == " 7:41:50 pm");
-    CHECK(clock.to_string('0', false) == "07:41:50 pm");
+    CHECK(clock.to_string(' ', true) == " 7:41:50 pm");
+    CHECK(clock.to_string('0', true) == "07:41:50 pm");
 
     clock = Clock{0, 0, 50};
-    CHECK(clock.to_string(' ', true) == "      50");
-    CHECK(clock.to_string('a', true) == "aa:aa:50");
+    CHECK(clock.to_string(' ') == "      50");
+    CHECK(clock.to_string('a') == "aa:aa:50");
     clock = Clock{0, 0, 00};
-    CHECK(clock.to_string(' ', true) == "       0");
-    CHECK(clock.to_string('a', true) == "aa:aa:a0");
+    CHECK(clock.to_string(' ') == "       0");
+    CHECK(clock.to_string('a') == "aa:aa:a0");
+    CHECK(clock.to_string(true) == "12:00:00 am");
 
     clock = Clock{12, 41, 50};
     CHECK(clock.to_string() == "12:41:50");
-    CHECK(clock.to_string(false) == "12:41:50 pm");
+    CHECK(clock.to_string(true) == "12:41:50 pm");
 
     clock = Clock{19, 41, 50};
     CHECK(clock.to_string() == "19:41:50");
-    CHECK(clock.to_string(false) == "07:41:50 pm");
+    CHECK(clock.to_string(true) == "07:41:50 pm");
 
     clock = Clock{00, 30, 30};
     CHECK(clock.to_string() == "00:30:30");
-    CHECK(clock.to_string(false) == "12:30:30 am");
+    CHECK(clock.to_string(true) == "12:30:30 am");
     /*en fräsig kommentar*/
     // Mycket fräsig!
 }
@@ -111,6 +112,38 @@ TEST_CASE("Testar jämförelseoperatorer", "[clock]")
     CHECK(clock_intermediate != clock_large);
 }
 
+TEST_CASE("Ser hur clock rundar tillbaka", "[clock]")
+{
+    Clock clock_one{1, 0, 0};
+    Clock clock_neg{-1, 0, 0};
+    Clock clock_23{23, 0, 0};
+    CHECK(clock_one.to_string() == "01:00:00");
+    CHECK(clock_one.to_string(true) == "01:00:00 am");
+    CHECK(clock_neg.to_string() == "23:00:00");
+    CHECK(clock_neg.to_string(true) == "11:00:00 pm");
+    CHECK(clock_neg == clock_23);
+}
+
 TEST_CASE("Counter Clock", "[counter_clock]"){
     CounterClock cc{};
+    CounterClock clock_one{1, 0, 0};
+    CounterClock clock_neg{-1, 0, 0};
+    CounterClock clock_23{23, 0, 0};
+    CHECK(clock_one.to_string() == "+01:00:00");
+    CHECK(clock_neg.to_string() == "-01:00:00");
+    CHECK_FALSE(clock_neg == clock_23);
+}
+
+
+TEST_CASE("Ser hur counter_clock rundar tillbaka", "[counter_clock]")
+{
+    CounterClock clock_one{1, 0, 0};
+    CounterClock clock_neg{-1, 0, 0};
+    CounterClock clock_23{23, 0, 0};
+    CHECK(clock_one.to_string() == "+01:00:00");
+    CHECK(clock_neg.to_string() == "-01:00:00");
+    CHECK(clock_one.to_string(' ') == "+ 1:00:00");
+    CHECK(clock_neg.to_string(' ') == "- 1:00:00");
+    CHECK_FALSE(clock_neg == clock_23);
+
 }

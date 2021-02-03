@@ -1,120 +1,18 @@
 #include <cstring>
 #include "../include/clock.h"
 
+std::string Clock::to_string(bool format_12h) const {
+    return to_string('0',true);
+}
+
 std::string Clock::to_string(char fill, bool format_12h) const
 {
-    int print_len{format_12h ? 8 : 11};
-    // int hms_start_pos{format_24h ? 0 : 0};
-    int hms_start_pos{0};
+    char* buff = new char[12];
+    ClockBase::to_string_base(buff,fill,format_12h);
+    std::string a(&buff[1],format_12h?11:8);
+    delete[] buff;
+    return  a;
 
-    char output[11];
-    char print_string[13];
-
-    memset(output, fill, print_len);
-    memset(print_string, fill, 13);
-
-    bool has_larger{false};
-    if (format_12h)
-    {
-        if (get_hour() > 0)
-        {
-            sprintf(print_string, "%.2i", get_hour());
-            has_larger = true;
-            fill = '0';
-        }
-    }
-    else
-    {
-        if (get_hour() > 12)
-        {
-            sprintf(print_string, "%.2i", get_hour() - 12);
-        }
-        else if (get_hour() == 0)
-        {
-            sprintf(print_string, "%.2i", 12);
-        }
-        else
-        {
-            sprintf(print_string, "%.2i", get_hour());
-        }
-        has_larger = true;
-    }
-    if(print_string[0] == '0'){
-        print_string[0] = fill;
-    }
-    memcpy(&output[hms_start_pos], print_string, 2);
-    if (has_larger || fill != ' ')
-    {
-        output[hms_start_pos + 2] = ':';
-    }
-
-    // Minutes
-    memset(print_string, fill, 2);
-    if (get_minute() != 0)
-    {
-
-        memset(print_string, fill, 2);
-        sprintf(print_string, "%.2i", get_minute());
-        if(print_string[0] == '0' && !has_larger){
-            print_string[0] = fill;
-        }
-        has_larger = true;
-        fill = '0';
-    }
-    else
-    {
-        if (has_larger )
-        {
-            memset(print_string, '0', 2);
-        }
-    }
-
-    memcpy(&output[hms_start_pos + 3], print_string, 2);
-    if (has_larger || fill != ' ')
-    {
-        output[hms_start_pos + 5] = ':';
-    }
-
-    // Second
-    memset(print_string, fill, 2);
-
-    if (get_second() != 0)
-    {
-        sprintf(print_string, "%.2i", get_second());
-        if(print_string[0] == '0' && !has_larger){
-            print_string[0] = ' ';
-        }
-        has_larger = true;
-        fill = '0';
-    }
-    else
-    {
-        if (has_larger)
-        {
-            memset(print_string, '0', 2);
-        }
-        else
-        {
-            memset(&print_string[1], '0', 1);
-        }
-    }
-
-    memcpy(&output[hms_start_pos + 6], print_string, 2);
-
-    /*AM/PM eller inget*/
-    if (!format_12h)
-    {
-        if (get_hour() < 12)
-        {
-            memcpy(&output[8], " am", 3);
-        }
-        else
-        {
-            memcpy(&output[8], " pm", 3);
-        }
-    }
-
-    return std::string(output, print_len);
 }
 
 Clock::Clock() {}
@@ -205,22 +103,23 @@ bool Clock::operator<(const Clock &rhs) const {
 }
 
 bool Clock::operator>(const Clock &rhs) const {
-    return false;
+    return ClockBase::operator>(rhs);
 }
 
 bool Clock::operator==(const Clock &rhs) const {
-    return false;
+    return ClockBase::operator==(rhs);
 }
 
 bool Clock::operator<=(const Clock &rhs) const {
-    return false;
+    return ClockBase::operator<=(rhs);
 }
 
 bool Clock::operator>=(const Clock &rhs) const {
-    return false;
+    return ClockBase::operator>=(rhs);
 }
 
 bool Clock::operator!=(const Clock &rhs) const {
-    return false;
+    return ClockBase::operator!=(rhs);
 }
+
 

@@ -3,6 +3,10 @@
 #include <string>
 class ClockBase
 {
+private:
+    void get_seconds_string(char* to_print_to, char fill = '0') const;
+    void get_minute_string(char* to_print_to, char fill = '0') const;
+    void get_hour_string(char *to_print_to, char fill = '0', bool format_12h = false) const;
 
 protected:
     int hour{};
@@ -11,13 +15,10 @@ protected:
     virtual void correct_time() = 0;
     void set_time(int, int, int);
 
-    void get_seconds_string(char* to_print_to, char fill = '0');
-    void get_minute_string(char* to_print_to, char fill = '0');
-    void get_hour_string(char *to_print_to, char fill = '0', bool format_12h = false);
-
     void increment_time();
-
     void decrement_time();
+
+    void to_string_base(char* output, char fill = '0', bool format_12h = false) const;
 
 public:
     ClockBase();

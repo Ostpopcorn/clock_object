@@ -33,11 +33,6 @@ void ClockBase::set_time(int h, int m, int s)
     second = s;
 }
 
-void ClockBase::correct_time() {
-
-}
-
-
 void ClockBase::increment_time()
 {
     second += 1;
@@ -265,13 +260,13 @@ ClockBase::~ClockBase() {
 
     return string(output, print_len);
 }*/
-void ClockBase::get_seconds_string(char* to_print_to, char fill) {
+void ClockBase::get_seconds_string(char* to_print_to, char fill) const {
     /*
      * prints to the char array what second it currently is.
      * Max 2 digits
      */
-    char ones_digit{static_cast<char>((get_second())%10)};
-    char tens_digit{static_cast<char>((get_second()/10)%10)};
+    char ones_digit{static_cast<char>('0'+(get_second())%10)};
+    char tens_digit{static_cast<char>('0'+(get_second()/10)%10)};
 
     if (get_hour() != 0 || get_minute() != 0){
         // Has larger
@@ -288,13 +283,13 @@ void ClockBase::get_seconds_string(char* to_print_to, char fill) {
     }
 }
 
-void ClockBase::get_minute_string(char* to_print_to, char fill) {
+void ClockBase::get_minute_string(char* to_print_to, char fill) const {
     /*
      * prints to the char array what second it currently is.
      * Max 2 digits
      */
-    char ones_digit{static_cast<char>((get_minute())%10)};
-    char tens_digit{static_cast<char>((get_minute()/10)%10)};
+    char ones_digit{static_cast<char>('0'+(get_minute())%10)};
+    char tens_digit{static_cast<char>('0'+(get_minute()/10)%10)};
 
     if (get_hour() != 0){
         // Has larger, should fill with 0:s
@@ -304,44 +299,73 @@ void ClockBase::get_minute_string(char* to_print_to, char fill) {
     }else{
         if ( tens_digit == '0' ){
             to_print_to[0] = fill;
+            to_print_to[1] = (ones_digit == '0')?fill:ones_digit;
         }else{
             to_print_to[0] = tens_digit;
+            to_print_to[1] = ones_digit;
         }
-        to_print_to[1] = ones_digit;
     }
 }
 
-void ClockBase::get_hour_string(char *to_print_to, char fill, bool format_12h) {
+void ClockBase::get_hour_string(char *to_print_to, char fill, bool format_12h) const {
     /*
      * prints to the char array what second it currently is.
      * Max 3 chars, 2 digits and one minus sign
      * Having hour be negative and format 12 h has undefined behaviour
      */
     bool is_negative{get_hour()<0};
-    int hour_to_use{0};
+    int hour_to_use{get_hour()};
+    if (is_negative){
+        hour_to_use = -hour_to_use;
+    }
     if (format_12h){
         hour_to_use = get_hour()%12; // 0-11
         if(hour_to_use == 0){
             //should be 12
             hour_to_use = 12;
         }
-    }else{
-        hour_to_use = get_hour();
     }
-    char ones_digit{static_cast<char>((hour_to_use)%10)};
-    char tens_digit{static_cast<char>((hour_to_use/10)%10)};
+    char ones_digit{static_cast<char>('0'+(hour_to_use)%10)};
+    char tens_digit{static_cast<char>('0'+(hour_to_use/10)%10)};
 
-    if (get_hour() != 0){
-        // Has larger, should fill with 0:s
-        to_print_to[0] = tens_digit;
-        to_print_to[1] = ones_digit;
-
+    if ( tens_digit == '0' ){
+        to_print_to[1] = fill;
+        to_print_to[2] = (ones_digit == '0')?fill:ones_digit;
     }else{
-        if ( tens_digit == '0' ){
-            to_print_to[0] = fill;
-        }else{
-            to_print_to[0] = tens_digit;
+        to_print_to[1] = tens_digit;
+        to_print_to[2] = ones_digit;
+    }
+    to_print_to[0] = !is_negative?'+':'-';
+
+}
+
+void ClockBase::to_string_base(char* output, char fill, bool format_12h) const {
+    int print_len{format_12h ? 12 : 9};
+    // int hms_start_pos{format_24h ? 0 : 0};
+    int hms_start_pos{0};
+
+    memset(output, fill, print_len);
+
+    get_hour_string(&output[hms_start_pos], fill, format_12h);
+
+    if (get_hour() != 0 || fill != ' ' || format_12h) {
+        output[hms_start_pos + 3] = ':';
+    }
+
+    get_minute_string(&output[hms_start_pos + 4], fill);
+    if (get_minute() != 0 || get_hour() != 0 || fill != ' ' || format_12h) {
+        output[hms_start_pos + 6] = ':';
+    }
+    get_seconds_string(&output[hms_start_pos + 7], fill);
+
+
+    /*AM/PM eller inget*/
+    if (format_12h) {
+        if (get_hour() < 12) {
+            memcpy(&output[9], " am", 3);
+        } else {
+            memcpy(&output[9], " pm", 3);
         }
-        to_print_to[1] = ones_digit;
     }
 }
+
