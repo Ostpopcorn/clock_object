@@ -21,19 +21,11 @@ public:
     Clock operator=(Clock const & rhs);
     Clock operator+(int rhs) const;
     Clock operator-(int rhs) const;
-    // Komplettering: Se standard declaration av prefix och postfix
-    // operatorerna på cpppreference.
     Clock& operator++();
     Clock operator++(int);
     Clock& operator--();
     Clock operator--(int);
 
-    bool operator<(Clock const &rhs) const;
-    bool operator>(Clock const &rhs) const;
-    bool operator==(Clock const &rhs) const;
-    bool operator<=(Clock const &rhs) const;
-    bool operator>=(Clock const &rhs) const;
-    bool operator!=(Clock const &rhs) const;
 
 };
 

@@ -18,7 +18,6 @@ std::string Clock::to_string(char fill, bool format_12h) const
 Clock::Clock() {}
 
 Clock::Clock(int h, int m, int s) : ClockBase(h, m, s) {
-    correct_time();
 }
 
 void Clock::correct_time() {
@@ -73,53 +72,25 @@ Clock Clock::operator-(int rhs) const {
 }
 
 Clock Clock::operator++(int) {
-    Clock return_clock{};
-    return_clock = *this;
+    Clock return_clock{*this};
     this->increment_time();
     return return_clock;
 }
 
 Clock &Clock::operator++() {
-    Clock return_clock{};
     this->increment_time();
     return *this;
 }
 
 Clock Clock::operator--(int) {
-    Clock return_clock{};
-    return_clock = *this;
+    Clock return_clock{*this};
     this->decrement_time();
     return return_clock;
 }
 
 Clock& Clock::operator--() {
-    Clock return_clock{};
     this->decrement_time();
     return *this;
-}
-
-bool Clock::operator<(const Clock &rhs) const {
-    return ClockBase::operator<(rhs);
-}
-
-bool Clock::operator>(const Clock &rhs) const {
-    return ClockBase::operator>(rhs);
-}
-
-bool Clock::operator==(const Clock &rhs) const {
-    return ClockBase::operator==(rhs);
-}
-
-bool Clock::operator<=(const Clock &rhs) const {
-    return ClockBase::operator<=(rhs);
-}
-
-bool Clock::operator>=(const Clock &rhs) const {
-    return ClockBase::operator>=(rhs);
-}
-
-bool Clock::operator!=(const Clock &rhs) const {
-    return ClockBase::operator!=(rhs);
 }
 
 

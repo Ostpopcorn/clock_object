@@ -114,23 +114,25 @@ TEST_CASE("Testar jämförelseoperatorer", "[clock]")
 
 TEST_CASE("Ser hur clock rundar tillbaka", "[clock]")
 {
-    Clock clock_one{1, 0, 0};
+    Clock clock_one{1, 0, 1};
     Clock clock_neg{-1, 0, 0};
-    Clock clock_23{23, 0, 0};
-    CHECK(clock_one.to_string() == "01:00:00");
-    CHECK(clock_one.to_string(true) == "01:00:00 am");
-    CHECK(clock_neg.to_string() == "23:00:00");
-    CHECK(clock_neg.to_string(true) == "11:00:00 pm");
+    Clock clock_23{23, 0, 1};
+    clock_neg++;
+    CHECK(clock_one.to_string() == "01:00:01");
+    CHECK(clock_one.to_string(true) == "01:00:01 am");
+    CHECK(clock_neg.to_string() == "23:00:01");
+    CHECK(clock_neg.to_string(true) == "11:00:01 pm");
     CHECK(clock_neg == clock_23);
 }
 
 TEST_CASE("Counter Clock", "[counter_clock]"){
     CounterClock cc{};
-    CounterClock clock_one{1, 0, 0};
+    CounterClock clock_one{1, 0, 1};
     CounterClock clock_neg{-1, 0, 0};
-    CounterClock clock_23{23, 0, 0};
-    CHECK(clock_one.to_string() == "+01:00:00");
-    CHECK(clock_neg.to_string() == "-01:00:00");
+    clock_neg++;
+    CounterClock clock_23{23, 0, 1};
+    CHECK(clock_one.to_string() == "+01:00:01");
+    CHECK(clock_neg.to_string() == "-01:00:01");
     CHECK_FALSE(clock_neg == clock_23);
 }
 

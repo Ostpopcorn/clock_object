@@ -1,4 +1,3 @@
-// Komplettering: Använd er alltid av engelska variabelnamn. 2-2
 
 #include <iostream>
 #include "include/clock.h"

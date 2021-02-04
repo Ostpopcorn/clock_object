@@ -1,4 +1,3 @@
-
 #include "../include/clock_base.h"
 #include <cstring>
 

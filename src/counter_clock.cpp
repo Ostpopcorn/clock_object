@@ -1,14 +1,9 @@
-//
-// Created by adrian on 2021-02-01.
-//
-
 #include <cstring>
 #include "../include/counter_clock.h"
 
 CounterClock::CounterClock() {}
 
 CounterClock::CounterClock(int h, int m, int s) : ClockBase(h, m, s) {
-    correct_time();
 }
 
 std::string CounterClock::to_string(char fill) const {
@@ -40,3 +35,44 @@ void CounterClock::correct_time() {
     }
 
 }
+
+CounterClock CounterClock::operator=(const CounterClock &rhs) {
+    second = rhs.get_second();
+    minute = rhs.get_minute();
+    hour = rhs.get_hour();
+    return *this;
+}
+
+CounterClock CounterClock::operator+(int rhs) const {
+    CounterClock output{this->get_hour(), this->get_minute(), this->get_second()+ rhs};
+    output.correct_time();
+    return output;
+}
+
+CounterClock CounterClock::operator-(int rhs) const {
+    CounterClock return_clock = *this + (-rhs);
+    return return_clock;
+}
+
+CounterClock CounterClock::operator++(int) {
+    CounterClock return_clock{*this};
+    this->increment_time();
+    return return_clock;
+}
+
+CounterClock &CounterClock::operator++() {
+    this->increment_time();
+    return *this;
+}
+
+CounterClock CounterClock::operator--(int) {
+    CounterClock return_clock{*this};
+    this->decrement_time();
+    return return_clock;
+}
+
+CounterClock& CounterClock::operator--() {
+    this->decrement_time();
+    return *this;
+}
+
