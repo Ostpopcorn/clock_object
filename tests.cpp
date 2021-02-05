@@ -39,7 +39,7 @@ TEST_CASE("Initializing", "[clock]")
     // Mycket fräsig!
 }
 
-TEST_CASE("Addition och subtraktion", "[clock]")
+TEST_CASE("Addition och subtraktion på Clock", "[clock]")
 {
     // Komplettering: Denna variabel används aldrig. 4-1
     Clock test_av_felaktig{24, -2, 10};
@@ -58,6 +58,8 @@ TEST_CASE("Addition och subtraktion", "[clock]")
     CHECK(clock_added.to_string() == "13:41:50");
     clock_added = clock + (3600 * 48);
     CHECK(clock_added.to_string() == "12:41:50");
+    clock_added = clock - (3600 * 48);
+    CHECK(clock_added.to_string() == "12:41:50");
 
     //enkel subtraktion
     clock_added = clock - (51 + 59);
@@ -72,7 +74,7 @@ TEST_CASE("Addition och subtraktion", "[clock]")
     CHECK(clock_added.to_string() == "12:41:50");
 }
 
-TEST_CASE("Testar jämförelseoperatorer", "[clock]")
+TEST_CASE("Testar jämförelseoperatorer på Clock", "[clock]")
 {
     Clock clock_intermediate{12, 41, 50};
     Clock clock_large{19, 41, 50};
@@ -126,18 +128,98 @@ TEST_CASE("Ser hur clock rundar tillbaka", "[clock]")
 }
 
 TEST_CASE("Counter Clock", "[counter_clock]"){
-    CounterClock cc{};
     CounterClock clock_one{1, 0, 1};
     CounterClock clock_neg{-1, 0, 0};
-    clock_neg++;
+    clock_neg--;
     CounterClock clock_23{23, 0, 1};
     CHECK(clock_one.to_string() == "+01:00:01");
     CHECK(clock_neg.to_string() == "-01:00:01");
     CHECK_FALSE(clock_neg == clock_23);
+    CounterClock cc{-1,30,00};
+    CHECK(cc.to_string() == "-00:30:00");
+    cc = CounterClock{0,-30,59};
+    CHECK(cc.to_string() == "-00:29:01");
+    cc = CounterClock{-1,59,59};
+    CHECK(cc.to_string() == "-00:00:01");
+}
+
+TEST_CASE("Counterclock arithmetics på CounterClock","[counter_clock]"){
+
+    CounterClock cc{};
+    CounterClock clock_zero{0, 0, 0};
+    cc = clock_zero-1;
+    CHECK(cc.to_string() == "-00:00:01");
+    cc = cc+2;
+    CHECK(cc.to_string() == "+00:00:01");
+    cc = cc - 1;
+    CHECK(cc.to_string() == " 00:00:00");
+    cc = cc + 1;
+    CHECK(cc.to_string() == "+00:00:01");
+    cc = cc - 1;
+    CHECK(cc.to_string() == " 00:00:00");
+    cc = cc - 61;
+    CHECK(cc.to_string() == "-00:01:01");
+    cc = cc + 120;
+    CHECK(cc.to_string() == "+00:00:59");
+    cc = cc - 118;
+    CHECK(cc.to_string() == "-00:00:59");
+
+}
+
+TEST_CASE("Testar jämförelseoperatorer på CounterClock", "[counter_clock]")
+{
+    CounterClock clock_intermediate{12, 41, 50};
+    CounterClock clock_large{19, 41, 50};
+    CounterClock clock_small{00, 30, 30};
+    CounterClock clock_minus_large{00, -30, 30};
+    CounterClock clock_minus_intermediate{-12, 41, 50};
+    CounterClock clock_minus_small{-19, 41, 50};
+
+    // Mindre än <
+    CHECK_FALSE(clock_intermediate < clock_small);
+    CHECK(clock_small < clock_intermediate);
+    CHECK_FALSE(clock_large < clock_intermediate);
+    CHECK_FALSE(clock_intermediate < clock_intermediate);
+
+    CHECK(clock_minus_large < clock_small);
+    CHECK(clock_minus_intermediate < clock_minus_large);
+    CHECK_FALSE(clock_minus_intermediate < clock_minus_small);
+
+    // Mindre än >
+    CHECK(clock_intermediate > clock_small);
+    CHECK_FALSE(clock_small > clock_intermediate);
+    CHECK(clock_large > clock_intermediate);
+    CHECK_FALSE(clock_intermediate > clock_intermediate);
+    CHECK_FALSE(clock_minus_small > clock_large);
+
+    //Lika med ==
+    CHECK(clock_intermediate == clock_intermediate);
+    CHECK_FALSE(clock_intermediate == clock_large);
+    CHECK_FALSE(clock_intermediate == clock_small);
+
+    // <=
+    CHECK_FALSE(clock_intermediate <= clock_small);
+    CHECK(clock_small <= clock_intermediate);
+    CHECK_FALSE(clock_large <= clock_intermediate);
+    CHECK(clock_intermediate <= clock_intermediate);
+
+    CHECK(clock_minus_intermediate <= clock_minus_intermediate);
+    CHECK_FALSE(clock_minus_large <= clock_minus_intermediate);
+    CHECK(clock_minus_small <= clock_minus_intermediate);
+
+    // >=
+    CHECK(clock_intermediate >= clock_intermediate);
+    CHECK(clock_intermediate >= clock_small);
+    CHECK_FALSE(clock_small >= clock_intermediate);
+    CHECK(clock_large >= clock_intermediate);
+
+    // !=
+    CHECK_FALSE(clock_intermediate != clock_intermediate);
+    CHECK(clock_intermediate != clock_large);
 }
 
 
-TEST_CASE("Ser hur counter_clock rundar tillbaka", "[counter_clock]")
+TEST_CASE("Ser hur counter_clock (inte) rundar tillbaka", "[counter_clock]")
 {
     CounterClock clock_one{1, 0, 0};
     CounterClock clock_neg{-1, 0, 0};

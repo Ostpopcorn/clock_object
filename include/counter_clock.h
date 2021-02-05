@@ -3,8 +3,11 @@
 #include "clock.h"
 
 class CounterClock : public ClockBase {
+private:
 protected:
-    void correct_time() override;
+    static void add_time(CounterClock& to_add_to,int amount);
+    void correct_time();
+
 public:
     CounterClock();
 

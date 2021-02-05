@@ -18,6 +18,7 @@ std::string Clock::to_string(char fill, bool format_12h) const
 Clock::Clock() {}
 
 Clock::Clock(int h, int m, int s) : ClockBase(h, m, s) {
+    correct_time();
 }
 
 void Clock::correct_time() {
@@ -46,14 +47,13 @@ void Clock::correct_time() {
     {
         hour += 24;
     }
+    this->negative = false;
 }
 
 
-Clock::Clock(const ClockBase& base) {
-    ClockBase::operator=(base);
-}
 
 Clock Clock::operator=(const Clock &rhs) {
+    negative = rhs.negative;
     second = rhs.get_second();
     minute = rhs.get_minute();
     hour = rhs.get_hour();
@@ -61,8 +61,8 @@ Clock Clock::operator=(const Clock &rhs) {
 }
 
 Clock Clock::operator+(int rhs) const {
-    Clock output{this->get_hour(), this->get_minute(), this->get_second()+ rhs};
-    output.correct_time();
+    Clock output{*this};
+    add_time(output,rhs);
     return output;
 }
 
@@ -73,24 +73,32 @@ Clock Clock::operator-(int rhs) const {
 
 Clock Clock::operator++(int) {
     Clock return_clock{*this};
-    this->increment_time();
+    add_time(*this,1);
     return return_clock;
 }
 
 Clock &Clock::operator++() {
-    this->increment_time();
+    add_time(*this,1);
     return *this;
 }
 
 Clock Clock::operator--(int) {
     Clock return_clock{*this};
-    this->decrement_time();
+    add_time(*this,-1);
     return return_clock;
 }
 
-Clock& Clock::operator--() {
-    this->decrement_time();
+Clock& Clock::operator--() {;
+    add_time(*this,-1);
     return *this;
 }
 
+void Clock::add_time(Clock &to_add_to, int amount) {
+    if (to_add_to.negative){
+        to_add_to.second -= amount;
+    }else{
+        to_add_to.second += amount;
+    }
+    to_add_to.correct_time();
 
+}

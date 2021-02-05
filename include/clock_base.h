@@ -12,11 +12,10 @@ protected:
     int hour{};
     int minute{};
     int second{};
-    virtual void correct_time() = 0;
+    bool negative{false};
+
     void set_time(int, int, int);
 
-    void increment_time();
-    void decrement_time();
 
     void to_string_base(char* output, char fill = '0', bool format_12h = false) const;
 
@@ -31,14 +30,15 @@ public:
     int get_second() const;
     int get_all_time_as_second() const;
 
-
     bool operator<(ClockBase const &rhs) const;
     bool operator>(ClockBase const &rhs) const;
     bool operator==(ClockBase const &rhs) const;
     bool operator<=(ClockBase const &rhs) const;
     bool operator>=(ClockBase const &rhs) const;
     bool operator!=(ClockBase const &rhs) const;
+
 };
+
 
 #endif
 

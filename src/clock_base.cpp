@@ -7,7 +7,6 @@ ClockBase::ClockBase() {}
 
 ClockBase::ClockBase(int h, int m, int s) : hour{h}, minute{m}, second{s}
 {
-
 }
 
 // Komplettering: Vi vill, som skapare av en modul, aldrig skriva ut
@@ -32,16 +31,6 @@ void ClockBase::set_time(int h, int m, int s)
     second = s;
 }
 
-void ClockBase::increment_time()
-{
-    second += 1;
-    correct_time();
-}
-void ClockBase::decrement_time()
-{
-    second -= 1;
-    correct_time();
-}
 
 
 int ClockBase::get_hour() const
@@ -58,77 +47,69 @@ int ClockBase::get_second() const
 }
 int ClockBase::get_all_time_as_second() const
 {
-    return this->second + (60 * this->minute) + (60 * 60 * this->hour);
+    int return_val{this->second + (60 * this->minute) + (60 * 60 * this->hour)};
+    return negative?-return_val:return_val;
 }
 
 bool ClockBase::operator<(ClockBase const &rhs) const
 {
     // Jämför först timmar
-    if (this->get_hour() < rhs.get_hour())
-    {
-        return true;
-    }
-    else if (this->get_hour() > rhs.get_hour())
-    {
+    if (this->negative){
+        if(!rhs.negative){return true;}
+        // Both negative
+        if (this->get_hour() > rhs.get_hour()){ return true; }
+        else if (this->get_hour() < rhs.get_hour()) { return false; }
+
+        if (this->get_minute() > rhs.get_minute()) { return true; }
+        else if (this->get_minute() < rhs.get_minute()) { return false; }
+
+        // Om det är samma minut så undersöks sekund
+        if (this->get_second() > rhs.get_second())
+        { return true;  }
+        return false;
+    }else {
+        if (rhs.negative) { return false; }
+        // Both positive
+        if (this->get_hour() < rhs.get_hour()){ return true; }
+        else if (this->get_hour() > rhs.get_hour()) { return false; }
+
+        if (this->get_minute() < rhs.get_minute()) { return true; }
+        else if (this->get_minute() > rhs.get_minute()) { return false; }
+
+        // Om det är samma minut så undersöks sekund
+        if (this->get_second() < rhs.get_second())
+        { return true;  }
         return false;
     }
 
-    // Om det är samma timme så undersöks minuter
-    if (this->get_minute() < rhs.get_minute())
-    {
-        return true;
-    }
-    else if (this->get_minute() > rhs.get_minute())
-    {
-        return false;
-    }
 
-    // Om det är samma minut så undersöks sekund
-    if (this->get_second() < rhs.get_second())
-    {
-        return true;
-    }
-    return false;
 }
 
 bool ClockBase::operator>(ClockBase const &rhs) const
 {
-    // Jämför först timmar
-    if (this->get_hour() > rhs.get_hour())
-    {
-        return true;
-    }
-    else if (this->get_hour() < rhs.get_hour())
-    {
-        return false;
-    }
-
-    // Om det är samma timme så undersöks minuter
-    if (this->get_minute() > rhs.get_minute())
-    {
-        return true;
-    }
-    else if (this->get_minute() < rhs.get_minute())
-    {
-        return false;
-    }
-
-    // Om det är samma minut så undersöks sekund
-    if (this->get_second() > rhs.get_second())
-    {
-        return true;
-    }
-    return false;
+    return !(*this <= rhs);
 }
 
 bool ClockBase::operator==(ClockBase const &rhs) const
 {
-    return !((*this < rhs) || (*this > rhs));
+    if (this->negative != rhs.negative){
+        return false;
+    }
+    if (this->hour != rhs.hour){
+        return false;
+    }
+    if (this->minute != rhs.minute){
+        return false;
+    }
+    if (this->second != rhs.second){
+        return false;
+    }
+    return true;
 }
 
 bool ClockBase::operator<=(ClockBase const &rhs) const
 {
-    return !(*this > rhs);
+    return *this < rhs || *this == rhs;
 }
 
 bool ClockBase::operator>=(ClockBase const &rhs) const
@@ -312,11 +293,7 @@ void ClockBase::get_hour_string(char *to_print_to, char fill, bool format_12h) c
      * Max 3 chars, 2 digits and one minus sign
      * Having hour be negative and format 12 h has undefined behaviour
      */
-    bool is_negative{get_hour()<0};
     int hour_to_use{get_hour()};
-    if (is_negative){
-        hour_to_use = -hour_to_use;
-    }
     if (format_12h){
         hour_to_use = get_hour()%12; // 0-11
         if(hour_to_use == 0){
@@ -334,7 +311,11 @@ void ClockBase::get_hour_string(char *to_print_to, char fill, bool format_12h) c
         to_print_to[1] = tens_digit;
         to_print_to[2] = ones_digit;
     }
-    to_print_to[0] = !is_negative?'+':'-';
+    if(this->get_all_time_as_second() != 0){
+        to_print_to[0] = !negative?'+':'-';
+    }else{
+        to_print_to[0] = ' ';
+    }
 
 }
 
