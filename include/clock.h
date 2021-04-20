@@ -17,7 +17,7 @@ public:
 
 
     std::string to_string(bool format_12h) const;
-    std::string to_string(char fill = '0', bool format_12h = false) const;
+    std::string to_string(char fill = '0', char separator = ':', bool format_12h = false) const;
 
 
     Clock operator=(Clock const & rhs);

@@ -7,9 +7,9 @@ CounterClock::CounterClock(int h, int m, int s) : ClockBase(h, m, s) {
     correct_time();
 }
 
-std::string CounterClock::to_string(char fill) const {
+std::string CounterClock::to_string(char fill, char separator) const {
     char* buff = new char[12];
-    ClockBase::to_string_base(buff,fill,false);
+    ClockBase::to_string_base(buff,fill,separator,false);
     std::string a(buff,9);
     delete[] buff;
     return  a;

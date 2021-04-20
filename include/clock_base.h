@@ -17,7 +17,7 @@ protected:
     void set_time(int, int, int);
 
 
-    void to_string_base(char* output, char fill = '0', bool format_12h = false) const;
+    void to_string_base(char* output, char fill = '0', char separator = ':', bool format_12h = false) const;
 
 public:
     ClockBase();

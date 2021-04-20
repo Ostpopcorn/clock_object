@@ -13,7 +13,7 @@ public:
 
     CounterClock(int h, int m, int s);
 
-    std::string to_string(char fill='0') const;
+    std::string to_string(char fill='0', char separator=':') const;
 
     CounterClock operator=(CounterClock const & rhs);
     CounterClock operator+(int rhs) const;

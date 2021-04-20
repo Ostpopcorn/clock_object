@@ -319,7 +319,7 @@ void ClockBase::get_hour_string(char *to_print_to, char fill, bool format_12h) c
 
 }
 
-void ClockBase::to_string_base(char* output, char fill, bool format_12h) const {
+void ClockBase::to_string_base(char* output, char fill, char separator, bool format_12h) const {
     int print_len{format_12h ? 12 : 9};
     // int hms_start_pos{format_24h ? 0 : 0};
     int hms_start_pos{0};
@@ -329,12 +329,12 @@ void ClockBase::to_string_base(char* output, char fill, bool format_12h) const {
     get_hour_string(&output[hms_start_pos], fill, format_12h);
 
     if (get_hour() != 0 || fill != ' ' || format_12h) {
-        output[hms_start_pos + 3] = ':';
+        output[hms_start_pos + 3] = separator;
     }
 
     get_minute_string(&output[hms_start_pos + 4], fill);
     if (get_minute() != 0 || get_hour() != 0 || fill != ' ' || format_12h) {
-        output[hms_start_pos + 6] = ':';
+        output[hms_start_pos + 6] = separator;
     }
     get_seconds_string(&output[hms_start_pos + 7], fill);
 

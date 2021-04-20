@@ -2,13 +2,13 @@
 #include "../include/clock.h"
 
 std::string Clock::to_string(bool format_12h) const {
-    return to_string('0',true);
+    return to_string('0',':',true);
 }
 
-std::string Clock::to_string(char fill, bool format_12h) const
+std::string Clock::to_string(char fill, char separator, bool format_12h) const
 {
     char* buff = new char[12];
-    ClockBase::to_string_base(buff,fill,format_12h);
+    ClockBase::to_string_base(buff,fill,separator,format_12h);
     std::string a(&buff[1],format_12h?11:8);
     delete[] buff;
     return  a;
