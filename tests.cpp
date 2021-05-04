@@ -13,8 +13,10 @@ TEST_CASE("Initializing", "[clock]")
     clock = Clock{19, 41, 50};
     CHECK(clock.to_string(true) == "07:41:50 pm");
     clock = Clock{19, 41, 50};
-    CHECK(clock.to_string(' ', true) == " 7:41:50 pm");
-    CHECK(clock.to_string('0', true) == "07:41:50 pm");
+    CHECK(clock.to_string(' ', ':', true) == " 7:41:50 pm");
+    CHECK(clock.to_string('0', ':', true) == "07:41:50 pm");
+    CHECK(clock.to_string(' ', 'q', true) == " 7q41q50 pm");
+    CHECK(clock.to_string('0', 'q', true) == "07q41q50 pm");
 
     clock = Clock{0, 0, 50};
     CHECK(clock.to_string(' ') == "      50");
@@ -141,6 +143,9 @@ TEST_CASE("Counter Clock", "[counter_clock]"){
     CHECK(cc.to_string() == "-00:29:01");
     cc = CounterClock{-1,59,59};
     CHECK(cc.to_string() == "-00:00:01");
+
+    CHECK(clock_one.to_string('a','b') == "+a1b00b01");
+    CHECK(clock_one.to_string(' ','-') == "+ 1-00-01");
 }
 
 TEST_CASE("Counterclock arithmetics på CounterClock","[counter_clock]"){
